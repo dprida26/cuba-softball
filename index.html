@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cuba Softbol - Roster oficial del torneo, estadísticas y resultados. Un Equipo · Una Pasión · Una Familia.">
+  <title>Cuba Softbol | Roster & Estadísticas del Torneo</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/logo.png?v=2">
+</head>
+<body>
+
+  <!-- Cuban Flag Stripe -->
+  <div class="flag-stripe">
+    <span></span><span></span><span></span>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-content">
+      <a href="#" class="navbar-logo" onclick="scrollToSection('inicio')">
+        <img src="assets/logo.png?v=2" alt="Cuba Softbol Logo">
+        <div class="team-name">CUBA <span>SOFTBOL</span></div>
+      </a>
+      
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#inicio" class="active" data-section="inicio">Inicio</a></li>
+        <li><a href="#roster" data-section="roster">Roster</a></li>
+        <li><a href="#estadisticas" data-section="estadisticas">Estadísticas</a></li>
+        <li><a href="#resultados" data-section="resultados">Resultados</a></li>
+      </ul>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">
+          <i class="fas fa-lock"></i> Admin
+        </button>
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg">
+      <!-- SVG Star Watermark -->
+      <svg class="hero-star" viewBox="0 0 100 100" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
+        <polygon points="50,5 61,35 95,35 67,55 78,90 50,70 22,90 33,55 5,35 39,35" fill="white"/>
+      </svg>
+    </div>
+    <div class="hero-content">
+      <img src="assets/logo.png?v=2" alt="Cuba Softbol" class="hero-logo">
+      <h1 class="hero-title">
+        <span class="highlight">CUBA</span>
+      </h1>
+      <p class="hero-subtitle">Softbol</p>
+      <p class="hero-motto">
+        Un Equipo <span>★</span> Una Pasión <span>★</span> Una Familia
+      </p>
+      
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="stat-value" id="heroPlayers">22</div>
+          <div class="stat-label">Jugadores</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-value" id="heroGames">0</div>
+          <div class="stat-label">Partidos</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-value" id="heroWins">0</div>
+          <div class="stat-label">Victorias</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-value" id="heroAvg">.000</div>
+          <div class="stat-label">AVG Equipo</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Roster Section -->
+  <section id="roster">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Torneo 2026</div>
+        <h2 class="section-title">ROSTER <span class="accent">OFICIAL</span></h2>
+      </div>
+    </div>
+    <div class="roster-grid" id="rosterGrid">
+      <!-- Player cards rendered by JS -->
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section id="estadisticas">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Temporada</div>
+        <h2 class="section-title">ESTADÍSTICAS <span class="accent">DE BATEO</span></h2>
+      </div>
+
+      <div class="stats-table-container">
+        <table class="stats-table" id="statsTable">
+          <thead>
+            <tr>
+              <th data-sort="name">#</th>
+              <th data-sort="name">Jugador</th>
+              <th data-sort="GP">JJ</th>
+              <th data-sort="AB">AB</th>
+              <th data-sort="R">C</th>
+              <th data-sort="H">H</th>
+              <th data-sort="2B">2B</th>
+              <th data-sort="3B">3B</th>
+              <th data-sort="HR">HR</th>
+              <th data-sort="RBI">CI</th>
+              <th data-sort="BB">BB</th>
+              <th data-sort="SO">SO</th>
+              <th data-sort="SB">BR</th>
+              <th data-sort="AVG">AVG</th>
+              <th data-sort="OBP">OBP</th>
+              <th data-sort="SLG">SLG</th>
+            </tr>
+          </thead>
+          <tbody id="statsBody">
+            <!-- Stats rows rendered by JS -->
+          </tbody>
+          <tfoot id="statsFoot">
+            <!-- Team totals rendered by JS -->
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  <section id="resultados">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Torneo</div>
+        <h2 class="section-title">RESULTADOS <span class="accent">& PARTIDOS</span></h2>
+      </div>
+
+      <div class="record-display" id="recordDisplay">
+        <div class="record-numbers">
+          <span class="wins" id="totalWins">0</span>
+          <span class="dash">-</span>
+          <span class="losses" id="totalLosses">0</span>
+        </div>
+        <div class="record-label">Victorias - Derrotas</div>
+      </div>
+
+      <div class="games-list" id="gamesList">
+        <!-- Games rendered by JS -->
+      </div>
+
+      <!-- Admin: Add Game -->
+      <div class="admin-section">
+        <div class="admin-card mt-4">
+          <h3><i class="fas fa-plus-circle"></i> Registrar Partido</h3>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Fecha</label>
+              <input type="date" id="gameDate">
+            </div>
+            <div class="admin-form-group">
+              <label>Rival</label>
+              <input type="text" id="gameOpponent" placeholder="Nombre del equipo rival">
+            </div>
+            <div class="admin-form-group">
+              <label>Cuba</label>
+              <input type="number" id="gameScoreUs" min="0" value="0">
+            </div>
+            <div class="admin-form-group">
+              <label>Rival</label>
+              <input type="number" id="gameScoreThem" min="0" value="0">
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm mt-2" id="loadStatsBtn" onclick="showStatsInputModal()">
+            <i class="fas fa-chart-bar"></i> Cargar Estadísticas del Partido
+          </button>
+          <button class="btn btn-outline btn-sm mt-2" id="cancelEditBtn" onclick="cancelEditGame()" style="display:none;">
+            <i class="fas fa-times"></i> Cancelar edición
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Input Modal -->
+  <div class="modal-overlay" id="statsModal">
+    <div class="modal" style="max-width: 95vw; width: 1100px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close" onclick="closeStatsModal()">&times;</button>
+      <h3 id="statsModalTitle"><i class="fas fa-edit"></i> Estadísticas del Partido</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        Ingresa las estadísticas de cada jugador para este partido. Deja en 0 los que no participaron.
+      </p>
+      <div class="stats-input-grid" id="statsInputGrid">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="mt-3" style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button class="btn btn-outline btn-sm" onclick="closeStatsModal()">Cancelar</button>
+        <button class="btn btn-primary" id="saveGameBtn" onclick="saveGame()">
+          <i class="fas fa-save"></i> Guardar Partido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Game Stats Modal -->
+  <div class="modal-overlay" id="viewGameModal">
+    <div class="modal" style="max-width: 900px; width: 95vw; max-height: 85vh; overflow-y: auto;">
+      <button class="modal-close" onclick="closeViewGameModal()">&times;</button>
+      <h3 id="viewGameTitle"><i class="fas fa-chart-bar"></i> Estadísticas del Partido</h3>
+      <div class="stats-table-container mt-3">
+        <table class="stats-table" id="viewGameTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Jugador</th><th>AB</th><th>C</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>CI</th><th>BB</th><th>SO</th><th>BR</th><th>AVG</th>
+            </tr>
+          </thead>
+          <tbody id="viewGameBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal" style="max-width: 420px;">
+      <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+      <h3><i class="fas fa-exclamation-triangle"></i> Confirmar</h3>
+      <p id="confirmMessage" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;"></p>
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button class="btn btn-outline btn-sm" onclick="closeConfirmModal()">Cancelar</button>
+        <button class="btn btn-danger btn-sm" id="confirmActionBtn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Modal -->
+  <div class="modal-overlay" id="passwordModal">
+    <div class="modal" style="max-width: 380px;">
+      <button class="modal-close" onclick="closePasswordModal()">&times;</button>
+      <h3><i class="fas fa-shield-alt"></i> Acceso Admin</h3>
+      <div class="admin-form-group">
+        <label>Contraseña</label>
+        <input type="password" id="adminPassword" placeholder="Ingrese la contraseña" 
+               onkeydown="if(event.key==='Enter') checkPassword()">
+      </div>
+      <button class="btn btn-primary mt-2" onclick="checkPassword()" style="width: 100%; justify-content: center;">
+        <i class="fas fa-unlock-alt"></i> Acceder
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">CUBA SOFTBOL</div>
+      <div class="footer-motto">Un Equipo · Una Pasión · Una Familia</div>
+      <div class="footer-flag">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
