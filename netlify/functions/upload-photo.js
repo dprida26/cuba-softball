@@ -11,16 +11,9 @@ exports.handler = async (event) => {
     const { playerId, base64, contentType, filename } = JSON.parse(event.body || '{}');
     if (!playerId || !base64) return json(400, { error: 'Faltan datos de la foto' });
 
-    // Clear the existing attachment first so re-uploading replaces it instead of appending
-    await fetch(`${baseUrl(TABLE)}/${playerId}`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ fields: { Photo: [] } })
-    });
-
+    // Upload first (Airtable appends it), then drop any older attachments so
+    // only the just-uploaded photo remains. Doing it in this order means a
+    // failed cleanup never leaves the player without a photo.
     const uploadRes = await fetch(
       `${CONTENT_API}/${process.env.AIRTABLE_BASE_ID}/${playerId}/Photo/uploadAttachment`,
       {
@@ -42,8 +35,31 @@ exports.handler = async (event) => {
       return json(uploadRes.status, { error: (data.error && data.error.message) || 'Error al subir la foto' });
     }
 
-    const photo = data.fields && data.fields.Photo && data.fields.Photo[0] ? data.fields.Photo[0].url : null;
-    return json(200, { photo });
+    const attachments = (data.fields && data.fields.Photo) || [];
+    const newest = attachments[attachments.length - 1];
+
+    if (!newest) {
+      return json(500, { error: 'La foto se subió pero Airtable no la devolvió' });
+    }
+
+    if (attachments.length > 1) {
+      const cleanupRes = await fetch(`${baseUrl(TABLE)}/${playerId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fields: { Photo: [{ id: newest.id }] } })
+      });
+      if (!cleanupRes.ok) {
+        const cleanupData = await cleanupRes.json().catch(() => ({}));
+        return json(cleanupRes.status, {
+          error: (cleanupData.error && cleanupData.error.message) || 'Error al reemplazar la foto anterior'
+        });
+      }
+    }
+
+    return json(200, { photo: newest.url });
   } catch (e) {
     return json(e.statusCode || 500, { error: e.message });
   }
