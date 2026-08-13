@@ -9,6 +9,7 @@
 const API_BASE = '/.netlify/functions';
 const STAT_KEYS = ['AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB'];
 const STAT_LABELS = ['AB', 'C', 'H', '2B', '3B', 'HR', 'CI', 'BB', 'SO', 'BR'];
+const PITCH_STAT_KEYS = ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'HR'];
 
 // ---- State ----
 let appData = { players: [], games: [] };
@@ -17,12 +18,14 @@ let adminPassword = null; // kept in memory only, sent with each write request
 let sortColumn = 'number';
 let sortDirection = 'asc';
 let editingGameId = null;
+let currentPitcherRows = []; // pitcher rows being edited in the stats modal
 
 // ---- Initialization ----
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
   renderRoster();
   renderStats();
+  renderPitchingStats();
   renderGames();
   updateHeroStats();
   setupNavigation();
@@ -305,6 +308,95 @@ function formatAvg(val) {
   return str.startsWith('0') ? str.substring(1) : str;
 }
 
+// ---- Pitching Statistics ----
+function getAllPitcherNames() {
+  const names = new Set();
+  appData.games.forEach(game => {
+    if (game.pitcherStats) Object.keys(game.pitcherStats).forEach(name => names.add(name));
+  });
+  return Array.from(names);
+}
+
+function calculatePitcherStats(pitcherName) {
+  const stats = { GP: 0 };
+  PITCH_STAT_KEYS.forEach(k => stats[k] = 0);
+
+  appData.games.forEach(game => {
+    if (game.pitcherStats && game.pitcherStats[pitcherName]) {
+      const gs = game.pitcherStats[pitcherName];
+      const played = PITCH_STAT_KEYS.some(k => (gs[k] || 0) > 0);
+      if (played) stats.GP++;
+      PITCH_STAT_KEYS.forEach(k => stats[k] += (gs[k] || 0));
+    }
+  });
+
+  stats.ERA = stats.IP > 0 ? (stats.ER * 9) / stats.IP : 0;
+  return stats;
+}
+
+function formatEra(val) {
+  if (!val) return '0.00';
+  return val.toFixed(2);
+}
+
+function renderPitchingStats() {
+  const tbody = document.getElementById('pitchingBody');
+  const tfoot = document.getElementById('pitchingFoot');
+  tbody.innerHTML = '';
+  tfoot.innerHTML = '';
+
+  const names = getAllPitcherNames();
+
+  if (names.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color: var(--text-muted); padding: 1.5rem;">Aún no hay estadísticas de lanzadores cargadas.</td></tr>`;
+    return;
+  }
+
+  const pitchers = names
+    .map(name => ({ name, computed: calculatePitcherStats(name) }))
+    .sort((a, b) => b.computed.IP - a.computed.IP);
+
+  const totals = { GP: 0 };
+  PITCH_STAT_KEYS.forEach(k => totals[k] = 0);
+
+  pitchers.forEach(p => {
+    const s = p.computed;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${p.name}</td>
+      <td>${s.GP}</td>
+      <td>${s.IP.toFixed(1)}</td>
+      <td>${s.H}</td>
+      <td>${s.R}</td>
+      <td>${s.ER}</td>
+      <td>${s.BB}</td>
+      <td>${s.SO}</td>
+      <td>${s.HR}</td>
+      <td>${formatEra(s.ERA)}</td>
+    `;
+    tbody.appendChild(row);
+
+    totals.GP = Math.max(totals.GP, s.GP);
+    PITCH_STAT_KEYS.forEach(k => totals[k] += s[k]);
+  });
+
+  const teamEra = totals.IP > 0 ? (totals.ER * 9) / totals.IP : 0;
+  const footRow = document.createElement('tr');
+  footRow.innerHTML = `
+    <td>EQUIPO</td>
+    <td>${appData.games.length}</td>
+    <td>${totals.IP.toFixed(1)}</td>
+    <td>${totals.H}</td>
+    <td>${totals.R}</td>
+    <td>${totals.ER}</td>
+    <td>${totals.BB}</td>
+    <td>${totals.SO}</td>
+    <td>${totals.HR}</td>
+    <td>${formatEra(teamEra)}</td>
+  `;
+  tfoot.appendChild(footRow);
+}
+
 function setupSortHeaders() {
   document.querySelectorAll('.stats-table th[data-sort]').forEach(th => {
     th.onclick = () => {
@@ -505,6 +597,12 @@ function showStatsInputModal() {
     });
   });
 
+  // Pitcher rows
+  const pitcherStats = editingGame && editingGame.pitcherStats ? editingGame.pitcherStats : {};
+  currentPitcherRows = Object.keys(pitcherStats).map(name => ({ name, ...pitcherStats[name] }));
+  updatePlayerNamesDatalist();
+  renderPitcherRows();
+
   document.getElementById('statsModalTitle').innerHTML = editingGameId
     ? '<i class="fas fa-edit"></i> Editar Estadísticas del Partido'
     : '<i class="fas fa-edit"></i> Estadísticas del Partido';
@@ -513,6 +611,70 @@ function showStatsInputModal() {
     : '<i class="fas fa-save"></i> Guardar Partido';
 
   document.getElementById('statsModal').classList.add('active');
+}
+
+// ---- Pitcher Rows (free-text name, since any player can pitch) ----
+function updatePlayerNamesDatalist() {
+  const datalist = document.getElementById('playerNamesList');
+  datalist.innerHTML = appData.players.map(p => `<option value="${p.name}">`).join('');
+}
+
+function addPitcherRow() {
+  currentPitcherRows.push({ name: '', IP: 0, H: 0, R: 0, ER: 0, BB: 0, SO: 0, HR: 0 });
+  renderPitcherRows();
+}
+
+function removePitcherRow(index) {
+  currentPitcherRows.splice(index, 1);
+  renderPitcherRows();
+}
+
+function renderPitcherRows() {
+  const container = document.getElementById('pitcherRows');
+  container.innerHTML = '';
+
+  if (currentPitcherRows.length === 0) {
+    container.innerHTML = '<p class="no-pitchers-msg">Ningún lanzador cargado todavía para este partido.</p>';
+    return;
+  }
+
+  currentPitcherRows.forEach((row, index) => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'pitcher-row';
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'pitcher-name';
+    nameInput.setAttribute('list', 'playerNamesList');
+    nameInput.placeholder = 'Nombre del lanzador';
+    nameInput.value = row.name || '';
+    nameInput.oninput = () => { currentPitcherRows[index].name = nameInput.value; };
+    rowEl.appendChild(nameInput);
+
+    PITCH_STAT_KEYS.forEach(key => {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = '0';
+      if (key === 'IP') input.step = '0.1';
+      input.value = row[key] || 0;
+      input.placeholder = key;
+      input.onfocus = function() { this.select(); };
+      input.oninput = () => {
+        currentPitcherRows[index][key] = key === 'IP' ? (parseFloat(input.value) || 0) : (parseInt(input.value) || 0);
+      };
+      rowEl.appendChild(input);
+    });
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'pitcher-remove-btn';
+    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    removeBtn.title = 'Quitar lanzador';
+    removeBtn.onclick = () => removePitcherRow(index);
+    rowEl.appendChild(removeBtn);
+
+    container.appendChild(rowEl);
+  });
 }
 
 function closeStatsModal() {
@@ -535,7 +697,16 @@ async function saveGame() {
     playerStats[player.id] = ps;
   });
 
-  const payload = { date, opponent, scoreUs, scoreThem, playerStats };
+  const pitcherStats = {};
+  currentPitcherRows.forEach(row => {
+    const name = (row.name || '').trim();
+    if (!name) return;
+    const ps = {};
+    PITCH_STAT_KEYS.forEach(key => { ps[key] = row[key] || 0; });
+    pitcherStats[name] = ps;
+  });
+
+  const payload = { date, opponent, scoreUs, scoreThem, playerStats, pitcherStats };
   const wasEditing = !!editingGameId;
 
   const saveBtn = document.getElementById('saveGameBtn');
@@ -552,6 +723,7 @@ async function saveGame() {
     }
 
     renderStats();
+    renderPitchingStats();
     renderGames();
     updateHeroStats();
     cancelEditGame();
@@ -598,6 +770,7 @@ function deleteGame(gameId) {
       await apiSend('games', 'DELETE', { id: gameId });
       appData.games = appData.games.filter(g => g.id !== gameId);
       renderStats();
+      renderPitchingStats();
       renderGames();
       updateHeroStats();
       showToast('Partido eliminado', 'success');
@@ -633,7 +806,8 @@ function viewGameStats(gameId) {
     .sort((a, b) => (b.gs.H || 0) - (a.gs.H || 0));
 
   if (rows.length === 0) {
-    body.innerHTML = `<tr><td colspan="13" style="text-align:center; color: var(--text-muted); padding: 2rem;">No hay estadísticas cargadas para este partido.</td></tr>`;
+    body.innerHTML = `<tr><td colspan="13" style="text-align:center; color: var(--text-muted); padding: 2rem;">No hay estadísticas de bateo cargadas para este partido.</td></tr>`;
+    renderViewGamePitching(game);
     document.getElementById('viewGameModal').classList.add('active');
     return;
   }
@@ -661,7 +835,40 @@ function viewGameStats(gameId) {
     body.appendChild(row);
   });
 
+  renderViewGamePitching(game);
   document.getElementById('viewGameModal').classList.add('active');
+}
+
+function renderViewGamePitching(game) {
+  const container = document.getElementById('viewGamePitchingContainer');
+  const body = document.getElementById('viewGamePitchingBody');
+  body.innerHTML = '';
+
+  const names = game.pitcherStats ? Object.keys(game.pitcherStats) : [];
+  if (names.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = '';
+  names.forEach(name => {
+    const gs = game.pitcherStats[name] || {};
+    const ip = gs.IP || 0;
+    const era = ip > 0 ? (gs.ER || 0) * 9 / ip : 0;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${name}</td>
+      <td>${ip.toFixed(1)}</td>
+      <td>${gs.H || 0}</td>
+      <td>${gs.R || 0}</td>
+      <td>${gs.ER || 0}</td>
+      <td>${gs.BB || 0}</td>
+      <td>${gs.SO || 0}</td>
+      <td>${gs.HR || 0}</td>
+      <td>${formatEra(era)}</td>
+    `;
+    body.appendChild(row);
+  });
 }
 
 function closeViewGameModal() {

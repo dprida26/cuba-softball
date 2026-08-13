@@ -1135,6 +1135,89 @@ body.admin-mode .admin-section {
   background: rgba(0, 37, 144, 0.08);
 }
 
+/* Pitching Section (Stats Input Modal) */
+.pitching-section {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.2rem;
+}
+
+.pitching-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.pitching-section-header h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  color: var(--cuba-red);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.pitcher-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.pitcher-row {
+  display: grid;
+  grid-template-columns: 160px repeat(7, 56px) 32px;
+  gap: 0.4rem;
+  align-items: center;
+  min-width: 640px;
+}
+
+.pitcher-row input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.5rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  text-align: center;
+  transition: border-color var(--transition-fast);
+}
+
+.pitcher-row input.pitcher-name {
+  text-align: left;
+}
+
+.pitcher-row input:focus {
+  outline: none;
+  border-color: var(--cuba-blue-light);
+  background: rgba(0, 37, 144, 0.08);
+}
+
+.pitcher-remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all var(--transition-fast);
+}
+
+.pitcher-remove-btn:hover {
+  color: var(--cuba-red-light);
+  background: rgba(207, 20, 43, 0.12);
+}
+
+.no-pitchers-msg {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  padding: 0.6rem 0;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;

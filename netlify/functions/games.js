@@ -9,13 +9,20 @@ function mapRecord(r) {
   } catch (e) {
     playerStats = {};
   }
+  let pitcherStats = {};
+  try {
+    pitcherStats = r.fields.PitcherStats ? JSON.parse(r.fields.PitcherStats) : {};
+  } catch (e) {
+    pitcherStats = {};
+  }
   return {
     id: r.id,
     date: r.fields.Date || '',
     opponent: r.fields.Opponent || '',
     scoreUs: typeof r.fields.ScoreUs === 'number' ? r.fields.ScoreUs : 0,
     scoreThem: typeof r.fields.ScoreThem === 'number' ? r.fields.ScoreThem : 0,
-    playerStats
+    playerStats,
+    pitcherStats
   };
 }
 
@@ -25,7 +32,8 @@ function toFields(body) {
     Opponent: body.opponent,
     ScoreUs: body.scoreUs,
     ScoreThem: body.scoreThem,
-    PlayerStats: JSON.stringify(body.playerStats || {})
+    PlayerStats: JSON.stringify(body.playerStats || {}),
+    PitcherStats: JSON.stringify(body.pitcherStats || {})
   };
 }
 
