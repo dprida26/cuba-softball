@@ -1323,6 +1323,32 @@ body.admin-mode .admin-section {
   background: rgba(0, 37, 144, 0.08);
 }
 
+.stats-input-grid select.pos-select {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.4rem 0.2rem;
+  border-radius: 4px;
+  text-align: center;
+  text-align-last: center;
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.stats-input-grid select.pos-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.stats-input-grid select.pos-select:focus {
+  outline: none;
+  border-color: var(--cuba-blue-light);
+  background: rgba(0, 37, 144, 0.08);
+}
+
 /* Pitching Section (Stats Input Modal) */
 .pitching-section {
   border-top: 1px solid var(--border-subtle);

@@ -11,6 +11,7 @@ const STAT_KEYS = ['AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB'];
 const STAT_LABELS = ['AB', 'C', 'H', '2B', '3B', 'HR', 'CI', 'BB', 'SO', 'BR'];
 const PITCH_STAT_KEYS = ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'HR'];
 const DEF_STAT_KEYS = ['PO', 'A', 'E'];
+const POSITIONS = ['', 'P', 'C', '1B', '2B', 'SS', '3B', 'RF', 'CF', 'LF', 'MI'];
 
 // ---- State ----
 let appData = { players: [], games: [] };
@@ -705,15 +706,14 @@ function showStatsInputModal() {
 
     const existingDefense = editingGame && editingGame.defenseStats ? editingGame.defenseStats[player.id] : null;
 
-    const posInput = document.createElement('input');
-    posInput.type = 'text';
-    posInput.maxLength = 4;
-    posInput.className = 'def-col-start';
-    posInput.placeholder = 'POS';
-    posInput.value = existingDefense ? (existingDefense.POS || '') : '';
-    posInput.id = `def_${player.id}_POS`;
-    posInput.onfocus = function() { this.select(); };
-    grid.appendChild(posInput);
+    const posSelect = document.createElement('select');
+    posSelect.className = 'def-col-start pos-select';
+    posSelect.id = `def_${player.id}_POS`;
+    posSelect.innerHTML = POSITIONS.map(pos =>
+      `<option value="${pos}">${pos || '—'}</option>`
+    ).join('');
+    posSelect.value = existingDefense ? (existingDefense.POS || '') : '';
+    grid.appendChild(posSelect);
 
     DEF_STAT_KEYS.forEach(key => {
       const input = document.createElement('input');
@@ -884,8 +884,8 @@ async function saveGame() {
 
   const defenseStats = {};
   appData.players.forEach(player => {
-    const posInput = document.getElementById(`def_${player.id}_POS`);
-    const ds = { POS: posInput ? posInput.value.trim() : '' };
+    const posSelect = document.getElementById(`def_${player.id}_POS`);
+    const ds = { POS: posSelect ? posSelect.value : '' };
     DEF_STAT_KEYS.forEach(key => {
       const input = document.getElementById(`def_${player.id}_${key}`);
       ds[key] = input ? parseInt(input.value) || 0 : 0;
