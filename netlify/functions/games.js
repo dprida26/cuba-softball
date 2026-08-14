@@ -15,6 +15,12 @@ function mapRecord(r) {
   } catch (e) {
     pitcherStats = {};
   }
+  let defenseStats = {};
+  try {
+    defenseStats = r.fields.DefenseStats ? JSON.parse(r.fields.DefenseStats) : {};
+  } catch (e) {
+    defenseStats = {};
+  }
   return {
     id: r.id,
     date: r.fields.Date || '',
@@ -22,7 +28,8 @@ function mapRecord(r) {
     scoreUs: typeof r.fields.ScoreUs === 'number' ? r.fields.ScoreUs : 0,
     scoreThem: typeof r.fields.ScoreThem === 'number' ? r.fields.ScoreThem : 0,
     playerStats,
-    pitcherStats
+    pitcherStats,
+    defenseStats
   };
 }
 
@@ -33,7 +40,8 @@ function toFields(body) {
     ScoreUs: body.scoreUs,
     ScoreThem: body.scoreThem,
     PlayerStats: JSON.stringify(body.playerStats || {}),
-    PitcherStats: JSON.stringify(body.pitcherStats || {})
+    PitcherStats: JSON.stringify(body.pitcherStats || {}),
+    DefenseStats: JSON.stringify(body.defenseStats || {})
   };
 }
 

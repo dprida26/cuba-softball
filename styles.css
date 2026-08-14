@@ -1072,11 +1072,17 @@ body.admin-mode .admin-section {
 /* Stats Input Grid */
 .stats-input-grid {
   display: grid;
-  grid-template-columns: 140px repeat(10, minmax(56px, 1fr));
+  grid-template-columns: 140px repeat(10, minmax(56px, 1fr)) minmax(52px, 1fr) repeat(3, minmax(52px, 1fr));
   gap: 0.3rem;
   font-size: 0.8rem;
   overflow-x: auto;
   padding-bottom: 6px;
+}
+
+/* Visual break where the defensive columns (POS, PO, A, E) start */
+.stats-input-grid .def-col-start {
+  border-left: 2px solid rgba(212, 175, 55, 0.35);
+  padding-left: 0.5rem;
 }
 
 .stats-input-grid .player-row-name {

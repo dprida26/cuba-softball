@@ -10,6 +10,7 @@ const API_BASE = '/.netlify/functions';
 const STAT_KEYS = ['AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB'];
 const STAT_LABELS = ['AB', 'C', 'H', '2B', '3B', 'HR', 'CI', 'BB', 'SO', 'BR'];
 const PITCH_STAT_KEYS = ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'HR'];
+const DEF_STAT_KEYS = ['PO', 'A', 'E'];
 
 // ---- State ----
 let appData = { players: [], games: [] };
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderRoster();
   renderStats();
   renderPitchingStats();
+  renderDefenseStats();
   renderGames();
   updateHeroStats();
   setupNavigation();
@@ -424,6 +426,67 @@ function renderPitchingStats() {
   tfoot.appendChild(footRow);
 }
 
+// ---- Defensive Statistics ----
+function calculateDefenseStats(playerId) {
+  const stats = { GP: 0, PO: 0, A: 0, E: 0 };
+
+  appData.games.forEach(game => {
+    if (game.defenseStats && game.defenseStats[playerId]) {
+      const gs = game.defenseStats[playerId];
+      const played = DEF_STAT_KEYS.some(k => (gs[k] || 0) > 0) || (gs.POS && gs.POS.trim());
+      if (played) stats.GP++;
+      DEF_STAT_KEYS.forEach(k => stats[k] += (gs[k] || 0));
+    }
+  });
+
+  const chances = stats.PO + stats.A + stats.E;
+  stats.FPCT = chances > 0 ? (stats.PO + stats.A) / chances : 0;
+  return stats;
+}
+
+function renderDefenseStats() {
+  const tbody = document.getElementById('defenseBody');
+  const tfoot = document.getElementById('defenseFoot');
+  tbody.innerHTML = '';
+  tfoot.innerHTML = '';
+
+  const totals = { GP: 0, PO: 0, A: 0, E: 0 };
+
+  appData.players.forEach(player => {
+    const s = calculateDefenseStats(player.id);
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="player-num-cell">${player.number}</td>
+      <td>${player.name}</td>
+      <td>${s.GP}</td>
+      <td>${s.PO}</td>
+      <td>${s.A}</td>
+      <td>${s.E}</td>
+      <td>${formatAvg(s.FPCT)}</td>
+    `;
+    tbody.appendChild(row);
+
+    totals.GP = Math.max(totals.GP, s.GP);
+    totals.PO += s.PO;
+    totals.A += s.A;
+    totals.E += s.E;
+  });
+
+  const chances = totals.PO + totals.A + totals.E;
+  const teamFpct = chances > 0 ? (totals.PO + totals.A) / chances : 0;
+  const footRow = document.createElement('tr');
+  footRow.innerHTML = `
+    <td></td>
+    <td>EQUIPO</td>
+    <td>${appData.games.length}</td>
+    <td>${totals.PO}</td>
+    <td>${totals.A}</td>
+    <td>${totals.E}</td>
+    <td>${formatAvg(teamFpct)}</td>
+  `;
+  tfoot.appendChild(footRow);
+}
+
 function setupSortHeaders() {
   document.querySelectorAll('.stats-table th[data-sort]').forEach(th => {
     th.onclick = () => {
@@ -596,10 +659,10 @@ function showStatsInputModal() {
   grid.innerHTML = '';
 
   // Headers
-  const headers = ['Jugador', ...STAT_LABELS];
-  headers.forEach((h) => {
+  const headers = ['Jugador', ...STAT_LABELS, 'POS', ...DEF_STAT_KEYS];
+  headers.forEach((h, i) => {
     const div = document.createElement('div');
-    div.className = 'grid-header';
+    div.className = 'grid-header' + (i === STAT_LABELS.length + 1 ? ' def-col-start' : '');
     div.textContent = h;
     grid.appendChild(div);
   });
@@ -619,6 +682,28 @@ function showStatsInputModal() {
       input.min = '0';
       input.value = existingStats ? (existingStats[key] || 0) : 0;
       input.id = `stat_${player.id}_${key}`;
+      input.onfocus = function() { this.select(); };
+      grid.appendChild(input);
+    });
+
+    const existingDefense = editingGame && editingGame.defenseStats ? editingGame.defenseStats[player.id] : null;
+
+    const posInput = document.createElement('input');
+    posInput.type = 'text';
+    posInput.maxLength = 4;
+    posInput.className = 'def-col-start';
+    posInput.placeholder = 'POS';
+    posInput.value = existingDefense ? (existingDefense.POS || '') : '';
+    posInput.id = `def_${player.id}_POS`;
+    posInput.onfocus = function() { this.select(); };
+    grid.appendChild(posInput);
+
+    DEF_STAT_KEYS.forEach(key => {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = '0';
+      input.value = existingDefense ? (existingDefense[key] || 0) : 0;
+      input.id = `def_${player.id}_${key}`;
       input.onfocus = function() { this.select(); };
       grid.appendChild(input);
     });
@@ -780,7 +865,18 @@ async function saveGame() {
     pitcherStats[name] = ps;
   });
 
-  const payload = { date, opponent, scoreUs, scoreThem, playerStats, pitcherStats };
+  const defenseStats = {};
+  appData.players.forEach(player => {
+    const posInput = document.getElementById(`def_${player.id}_POS`);
+    const ds = { POS: posInput ? posInput.value.trim() : '' };
+    DEF_STAT_KEYS.forEach(key => {
+      const input = document.getElementById(`def_${player.id}_${key}`);
+      ds[key] = input ? parseInt(input.value) || 0 : 0;
+    });
+    defenseStats[player.id] = ds;
+  });
+
+  const payload = { date, opponent, scoreUs, scoreThem, playerStats, pitcherStats, defenseStats };
   const wasEditing = !!editingGameId;
 
   const saveBtn = document.getElementById('saveGameBtn');
@@ -798,6 +894,7 @@ async function saveGame() {
 
     renderStats();
     renderPitchingStats();
+    renderDefenseStats();
     renderGames();
     updateHeroStats();
     cancelEditGame();
@@ -845,6 +942,7 @@ function deleteGame(gameId) {
       appData.games = appData.games.filter(g => g.id !== gameId);
       renderStats();
       renderPitchingStats();
+      renderDefenseStats();
       renderGames();
       updateHeroStats();
       showToast('Partido eliminado', 'success');
@@ -882,6 +980,7 @@ function viewGameStats(gameId) {
   if (rows.length === 0) {
     body.innerHTML = `<tr><td colspan="13" style="text-align:center; color: var(--text-muted); padding: 2rem;">No hay estadísticas de bateo cargadas para este partido.</td></tr>`;
     renderViewGamePitching(game);
+    renderViewGameDefense(game);
     document.getElementById('viewGameModal').classList.add('active');
     return;
   }
@@ -910,7 +1009,44 @@ function viewGameStats(gameId) {
   });
 
   renderViewGamePitching(game);
+  renderViewGameDefense(game);
   document.getElementById('viewGameModal').classList.add('active');
+}
+
+function renderViewGameDefense(game) {
+  const container = document.getElementById('viewGameDefenseContainer');
+  const body = document.getElementById('viewGameDefenseBody');
+  body.innerHTML = '';
+
+  const rows = appData.players
+    .map(player => {
+      const gs = (game.defenseStats && game.defenseStats[player.id]) || {};
+      const played = DEF_STAT_KEYS.some(k => (gs[k] || 0) > 0) || (gs.POS && gs.POS.trim());
+      return { player, gs, played };
+    })
+    .filter(r => r.played);
+
+  if (rows.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = '';
+  rows.forEach(({ player, gs }) => {
+    const chances = (gs.PO || 0) + (gs.A || 0) + (gs.E || 0);
+    const fpct = chances > 0 ? ((gs.PO || 0) + (gs.A || 0)) / chances : 0;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="player-num-cell">${player.number}</td>
+      <td>${player.name}</td>
+      <td>${gs.POS || '-'}</td>
+      <td>${gs.PO || 0}</td>
+      <td>${gs.A || 0}</td>
+      <td>${gs.E || 0}</td>
+      <td>${formatAvg(fpct)}</td>
+    `;
+    body.appendChild(row);
+  });
 }
 
 function renderViewGamePitching(game) {

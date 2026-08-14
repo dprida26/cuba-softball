@@ -162,6 +162,33 @@
           </tfoot>
         </table>
       </div>
+
+      <div class="section-header mt-4">
+        <div class="section-tag">Temporada</div>
+        <h2 class="section-title">ESTADÍSTICAS <span class="accent">DEFENSIVAS</span></h2>
+      </div>
+
+      <div class="stats-table-container">
+        <table class="stats-table" id="defenseTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Jugador</th>
+              <th>JJ</th>
+              <th>PO</th>
+              <th>A</th>
+              <th>E</th>
+              <th>FPCT</th>
+            </tr>
+          </thead>
+          <tbody id="defenseBody">
+            <!-- Defense rows rendered by JS -->
+          </tbody>
+          <tfoot id="defenseFoot">
+            <!-- Team totals rendered by JS -->
+          </tfoot>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -296,6 +323,19 @@
             </tr>
           </thead>
           <tbody id="viewGamePitchingBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="stats-table-container mt-3" id="viewGameDefenseContainer" style="display:none;">
+        <table class="stats-table" id="viewGameDefenseTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Jugador</th><th>POS</th><th>PO</th><th>A</th><th>E</th><th>FPCT</th>
+            </tr>
+          </thead>
+          <tbody id="viewGameDefenseBody">
             <!-- Rendered by JS -->
           </tbody>
         </table>
