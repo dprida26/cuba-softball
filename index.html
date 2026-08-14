@@ -241,8 +241,21 @@
         <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.8rem;">
           Escribe el nombre del lanzador (puede ser cualquier jugador del roster) y agrega sus estadísticas de ese partido. Puedes cargar varios lanzadores por partido.
         </p>
-        <div class="pitcher-rows" id="pitcherRows">
-          <!-- Rendered by JS -->
+        <div class="pitcher-rows" id="pitcherRowsWrapper">
+          <div class="pitcher-row pitcher-row-header">
+            <div class="grid-header" style="text-align:left;">Lanzador</div>
+            <div class="grid-header">IP</div>
+            <div class="grid-header">H</div>
+            <div class="grid-header">C</div>
+            <div class="grid-header">CL</div>
+            <div class="grid-header">BB</div>
+            <div class="grid-header">SO</div>
+            <div class="grid-header">HR</div>
+            <div></div>
+          </div>
+          <div id="pitcherRows">
+            <!-- Rendered by JS -->
+          </div>
         </div>
         <datalist id="playerNamesList"></datalist>
       </div>

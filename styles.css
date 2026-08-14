@@ -1173,6 +1173,14 @@ body.admin-mode .admin-section {
   min-width: 640px;
 }
 
+.pitcher-row-header {
+  margin-bottom: 0.2rem;
+}
+
+.pitcher-row-header .grid-header {
+  padding: 0.4rem 0.3rem;
+}
+
 .pitcher-row input {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
