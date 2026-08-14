@@ -50,7 +50,7 @@ Base con dos tablas (los nombres de tabla no distinguen mayúsculas, pero los de
 | `ScoreThem` | Number |
 | `PlayerStats` | Long text — JSON `{ [playerId]: {AB,R,H,2B,3B,HR,RBI,BB,SO,SB} }` |
 | `PitcherStats` | Long text — JSON `{ [nombreLanzador]: {IP,H,R,ER,BB,SO,HR} }` (nombre libre, no vinculado a `Players`) |
-| `DefenseStats` | Long text — JSON `{ [playerId]: {POS,PO,A,E} }` |
+| `DefenseStats` | Long text — JSON `{ [playerId]: {POS,PO,A,E} }`. `POS` es una de: `P C 1B 2B SS 3B RF CF LF MI` o `''` |
 
 Los campos `*Stats` guardan JSON como texto plano; las funciones de Netlify (`games.js`) hacen el `JSON.parse`/`JSON.stringify` en ambas direcciones.
 
@@ -84,8 +84,20 @@ git push -u origin nombre-de-la-rama
 
 Para cambios chicos y de bajo riesgo (ajustes de CSS, texto) se puede subir directo a `master`.
 
+## Funcionalidades
+
+- **Roster**: tarjetas estilo jersey con bandera cubana, número, foto (editable en modo admin) y, al tocar la foto, un overlay con el AVG de torneo del jugador (`.000` si no tiene datos). Toca otra foto para cambiar cuál se muestra.
+- **Estadísticas** (sección colapsable, una tabla por categoría):
+  - **Bateo**: por jugador del roster, con orden interactivo por columna.
+  - **Lanzadores**: por nombre libre (puede ser cualquier jugador, con autocompletado), IP con notación real de béisbol y ERA calculado en vivo mientras se cargan los datos.
+  - **Defensa**: por jugador del roster, con posición (dropdown) + PO/A/E + porcentaje de fildeo.
+  - Cada encabezado de columna tiene un tooltip explicativo (hover en desktop, tap en móvil).
+- **Resultados**: lista de partidos con récord, y por cada uno botones para **Ver** (estadísticas de ese partido, bateo+pitcheo+defensa), **Editar** y **Eliminar** (estos dos solo en modo admin).
+- **Modo Admin**: contraseña para habilitar edición — subir fotos, registrar/editar/eliminar partidos con sus tres categorías de estadísticas.
+
 ## Notas importantes
 
 - Los `IP` (entradas lanzadas) usan la notación real de béisbol: el dígito después del punto son *outs* (0, 1 o 2), no décimas — 1.2 + 1.1 = 3.0, no 2.3. Por eso el campo IP en el formulario es un contador (botones −/+), no texto libre.
+- La posición defensiva (`POS`) es un dropdown fijo (`P C 1B 2B SS 3B RF CF LF MI`), definido en `POSITIONS` al inicio de `app.js` — para agregar/quitar una posición, se edita esa constante.
 - Los adjuntos de Airtable (fotos) tienen URLs que **expiran y se regeneran** — por eso el sitio siempre pide el roster fresco a Airtable en cada carga en vez de guardar las URLs.
 - El pitcheo se identifica por **nombre de texto libre** (con autocompletado del roster), no por ID de jugador, porque cualquier jugador puede lanzar en un partido dado.
