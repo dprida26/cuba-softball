@@ -27,8 +27,8 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="#inicio" class="active" data-section="inicio">Inicio</a></li>
         <li><a href="#roster" data-section="roster">Roster</a></li>
-        <li><a href="#estadisticas" data-section="estadisticas">Estadísticas</a></li>
         <li><a href="#resultados" data-section="resultados">Resultados</a></li>
+        <li><a href="#estadisticas" data-section="estadisticas">Estadísticas</a></li>
       </ul>
 
       <div style="display: flex; align-items: center; gap: 10px;">
@@ -94,104 +94,6 @@
     </div>
   </section>
 
-  <!-- Statistics Section -->
-  <section id="estadisticas">
-    <div class="section">
-      <div class="section-header">
-        <div class="section-tag">Temporada</div>
-        <h2 class="section-title">ESTADÍSTICAS <span class="accent">DE BATEO</span></h2>
-      </div>
-
-      <div class="stats-table-container">
-        <table class="stats-table" id="statsTable">
-          <thead>
-            <tr>
-              <th data-sort="name" data-tip="Número de camiseta">#</th>
-              <th data-sort="name">Jugador</th>
-              <th data-sort="GP" data-tip="Juegos Jugados">JJ</th>
-              <th data-sort="AB" data-tip="Turnos al bate (At Bats)">AB</th>
-              <th data-sort="R" data-tip="Carreras anotadas">C</th>
-              <th data-sort="H" data-tip="Hits conectados">H</th>
-              <th data-sort="2B" data-tip="Dobles">2B</th>
-              <th data-sort="3B" data-tip="Triples">3B</th>
-              <th data-sort="HR" data-tip="Jonrones">HR</th>
-              <th data-sort="RBI" data-tip="Carreras Impulsadas">CI</th>
-              <th data-sort="BB" data-tip="Bases por Bolas recibidas">BB</th>
-              <th data-sort="SO" data-tip="Ponches (Strikeouts)">SO</th>
-              <th data-sort="SB" data-tip="Bases Robadas">BR</th>
-              <th data-sort="AVG" data-tip="Promedio de bateo">AVG</th>
-              <th data-sort="OBP" data-tip="Porcentaje de embasado (On-Base Percentage)">OBP</th>
-              <th data-sort="SLG" data-tip="Slugging: poder de bateo">SLG</th>
-            </tr>
-          </thead>
-          <tbody id="statsBody">
-            <!-- Stats rows rendered by JS -->
-          </tbody>
-          <tfoot id="statsFoot">
-            <!-- Team totals rendered by JS -->
-          </tfoot>
-        </table>
-      </div>
-
-      <div class="section-header mt-4">
-        <div class="section-tag">Temporada</div>
-        <h2 class="section-title">ESTADÍSTICAS <span class="accent">DE LANZADORES</span></h2>
-      </div>
-
-      <div class="stats-table-container">
-        <table class="stats-table" id="pitchingTable">
-          <thead>
-            <tr>
-              <th>Lanzador</th>
-              <th data-tip="Juegos Jugados">JJ</th>
-              <th data-tip="Entradas Lanzadas (Innings Pitched)">IP</th>
-              <th data-tip="Hits permitidos">H</th>
-              <th data-tip="Carreras permitidas">C</th>
-              <th data-tip="Carreras Limpias (Earned Runs)">CL</th>
-              <th data-tip="Bases por Bolas otorgadas">BB</th>
-              <th data-tip="Ponches propinados">SO</th>
-              <th data-tip="Jonrones permitidos">HR</th>
-              <th data-tip="Promedio de Carreras Limpias (Earned Run Average)">ERA</th>
-            </tr>
-          </thead>
-          <tbody id="pitchingBody">
-            <!-- Pitching rows rendered by JS -->
-          </tbody>
-          <tfoot id="pitchingFoot">
-            <!-- Team totals rendered by JS -->
-          </tfoot>
-        </table>
-      </div>
-
-      <div class="section-header mt-4">
-        <div class="section-tag">Temporada</div>
-        <h2 class="section-title">ESTADÍSTICAS <span class="accent">DEFENSIVAS</span></h2>
-      </div>
-
-      <div class="stats-table-container">
-        <table class="stats-table" id="defenseTable">
-          <thead>
-            <tr>
-              <th data-tip="Número de camiseta">#</th>
-              <th>Jugador</th>
-              <th data-tip="Juegos Jugados">JJ</th>
-              <th data-tip="Outs realizados (Putouts)">PO</th>
-              <th data-tip="Asistencias">A</th>
-              <th data-tip="Errores">E</th>
-              <th data-tip="Porcentaje de Fildeo: (PO+A) / (PO+A+E)">FPCT</th>
-            </tr>
-          </thead>
-          <tbody id="defenseBody">
-            <!-- Defense rows rendered by JS -->
-          </tbody>
-          <tfoot id="defenseFoot">
-            <!-- Team totals rendered by JS -->
-          </tfoot>
-        </table>
-      </div>
-    </div>
-  </section>
-
   <!-- Results Section -->
   <section id="resultados">
     <div class="section">
@@ -243,6 +145,116 @@
           </button>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section id="estadisticas">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Temporada</div>
+        <h2 class="section-title">ESTADÍSTICAS</h2>
+        <p class="collapse-hint">Toca cada categoría para ver el detalle</p>
+      </div>
+
+      <details class="stats-collapsible">
+        <summary>
+          <span class="section-tag">Bateo</span>
+          <h3 class="collapsible-title">ESTADÍSTICAS <span class="accent">DE BATEO</span></h3>
+          <i class="fas fa-chevron-down collapse-icon"></i>
+        </summary>
+        <div class="stats-table-container">
+          <table class="stats-table" id="statsTable">
+            <thead>
+              <tr>
+                <th data-sort="name" data-tip="Número de camiseta">#</th>
+                <th data-sort="name">Jugador</th>
+                <th data-sort="GP" data-tip="Juegos Jugados">JJ</th>
+                <th data-sort="AB" data-tip="Turnos al bate (At Bats)">AB</th>
+                <th data-sort="R" data-tip="Carreras anotadas">C</th>
+                <th data-sort="H" data-tip="Hits conectados">H</th>
+                <th data-sort="2B" data-tip="Dobles">2B</th>
+                <th data-sort="3B" data-tip="Triples">3B</th>
+                <th data-sort="HR" data-tip="Jonrones">HR</th>
+                <th data-sort="RBI" data-tip="Carreras Impulsadas">CI</th>
+                <th data-sort="BB" data-tip="Bases por Bolas recibidas">BB</th>
+                <th data-sort="SO" data-tip="Ponches (Strikeouts)">SO</th>
+                <th data-sort="SB" data-tip="Bases Robadas">BR</th>
+                <th data-sort="AVG" data-tip="Promedio de bateo">AVG</th>
+                <th data-sort="OBP" data-tip="Porcentaje de embasado (On-Base Percentage)">OBP</th>
+                <th data-sort="SLG" data-tip="Slugging: poder de bateo">SLG</th>
+              </tr>
+            </thead>
+            <tbody id="statsBody">
+              <!-- Stats rows rendered by JS -->
+            </tbody>
+            <tfoot id="statsFoot">
+              <!-- Team totals rendered by JS -->
+            </tfoot>
+          </table>
+        </div>
+      </details>
+
+      <details class="stats-collapsible">
+        <summary>
+          <span class="section-tag">Pitcheo</span>
+          <h3 class="collapsible-title">ESTADÍSTICAS <span class="accent">DE LANZADORES</span></h3>
+          <i class="fas fa-chevron-down collapse-icon"></i>
+        </summary>
+        <div class="stats-table-container">
+          <table class="stats-table" id="pitchingTable">
+            <thead>
+              <tr>
+                <th>Lanzador</th>
+                <th data-tip="Juegos Jugados">JJ</th>
+                <th data-tip="Entradas Lanzadas (Innings Pitched)">IP</th>
+                <th data-tip="Hits permitidos">H</th>
+                <th data-tip="Carreras permitidas">C</th>
+                <th data-tip="Carreras Limpias (Earned Runs)">CL</th>
+                <th data-tip="Bases por Bolas otorgadas">BB</th>
+                <th data-tip="Ponches propinados">SO</th>
+                <th data-tip="Jonrones permitidos">HR</th>
+                <th data-tip="Promedio de Carreras Limpias (Earned Run Average)">ERA</th>
+              </tr>
+            </thead>
+            <tbody id="pitchingBody">
+              <!-- Pitching rows rendered by JS -->
+            </tbody>
+            <tfoot id="pitchingFoot">
+              <!-- Team totals rendered by JS -->
+            </tfoot>
+          </table>
+        </div>
+      </details>
+
+      <details class="stats-collapsible">
+        <summary>
+          <span class="section-tag">Defensa</span>
+          <h3 class="collapsible-title">ESTADÍSTICAS <span class="accent">DEFENSIVAS</span></h3>
+          <i class="fas fa-chevron-down collapse-icon"></i>
+        </summary>
+        <div class="stats-table-container">
+          <table class="stats-table" id="defenseTable">
+            <thead>
+              <tr>
+                <th data-tip="Número de camiseta">#</th>
+                <th>Jugador</th>
+                <th data-tip="Juegos Jugados">JJ</th>
+                <th data-tip="Outs realizados (Putouts)">PO</th>
+                <th data-tip="Asistencias">A</th>
+                <th data-tip="Errores">E</th>
+                <th data-tip="Porcentaje de Fildeo: (PO+A) / (PO+A+E)">FPCT</th>
+              </tr>
+            </thead>
+            <tbody id="defenseBody">
+              <!-- Defense rows rendered by JS -->
+            </tbody>
+            <tfoot id="defenseFoot">
+              <!-- Team totals rendered by JS -->
+            </tfoot>
+          </table>
+        </div>
+      </details>
     </div>
   </section>
 

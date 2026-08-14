@@ -423,6 +423,76 @@ body {
   color: var(--cuba-blue-light);
 }
 
+.collapse-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* ---- Collapsible stat tables ---- */
+.stats-collapsible {
+  max-width: var(--max-width);
+  margin: 0 auto 1.5rem;
+}
+
+.stats-collapsible summary {
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+  padding: 1.2rem 1.5rem;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  transition: all var(--transition-fast);
+}
+
+.stats-collapsible summary::-webkit-details-marker {
+  display: none;
+}
+
+.stats-collapsible summary:hover {
+  background: var(--bg-glass-hover);
+  border-color: rgba(0, 37, 144, 0.3);
+}
+
+.stats-collapsible[open] summary {
+  border-radius: 12px 12px 0 0;
+  border-bottom-color: transparent;
+}
+
+.stats-collapsible .section-tag {
+  margin-bottom: 0.4rem;
+}
+
+.stats-collapsible .collapsible-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: var(--cuba-white);
+}
+
+.stats-collapsible .collapsible-title .accent {
+  color: var(--cuba-blue-light);
+}
+
+.stats-collapsible .collapse-icon {
+  display: block;
+  margin: 0.7rem auto 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  transition: transform var(--transition-fast);
+}
+
+.stats-collapsible[open] .collapse-icon {
+  transform: rotate(180deg);
+}
+
+.stats-collapsible .stats-table-container {
+  border-radius: 0 0 12px 12px;
+  border-top: none;
+  margin-top: 0;
+}
+
 /* ---- Roster Section ---- */
 #roster {
   background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
