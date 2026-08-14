@@ -86,6 +86,8 @@ function renderRoster() {
       ? `<img class="player-photo" src="${player.photo}" alt="${player.name}">`
       : `<div class="player-photo-placeholder"><i class="fas fa-user"></i></div>`;
 
+    const avg = calculatePlayerStats(player.id).AVG;
+
     card.innerHTML = `
       <div class="jersey-header">
         <svg class="jersey-star" viewBox="0 0 24 24"><polygon points="12,2 14.9,9.2 22.5,9.5 16.5,14.3 18.6,21.7 12,17.3 5.4,21.7 7.5,14.3 1.5,9.5 9.1,9.2"/></svg>
@@ -93,10 +95,13 @@ function renderRoster() {
           <span>#</span>${player.number}
         </div>
       </div>
-      <div class="player-photo-container">
+      <div class="player-photo-container" onclick="togglePlayerAvg('${player.id}')">
         ${photoContent}
         <div class="player-photo-overlay" onclick="triggerPhotoUpload('${player.id}')" title="${player.photo ? 'Cambiar foto' : 'Subir foto'}">
           <i class="fas fa-camera"></i>
+        </div>
+        <div class="player-avg-badge" data-player-id="${player.id}">
+          <span class="avg-label">AVG</span>${formatAvg(avg)}
         </div>
         <input type="file" class="player-photo-input" id="photoInput_${player.id}"
                accept="image/*" onchange="handlePhotoUpload('${player.id}', this)">
@@ -116,6 +121,17 @@ function triggerPhotoUpload(playerId) {
   if (!isAdminMode) return;
   const input = document.getElementById(`photoInput_${playerId}`);
   if (input) input.click();
+}
+
+// Tap a player's photo to see their tournament AVG; tapping another player's
+// photo swaps to theirs. In admin mode the tap uploads a photo instead.
+function togglePlayerAvg(playerId) {
+  if (isAdminMode) return;
+  document.querySelectorAll('.player-avg-badge.show').forEach(el => {
+    if (el.dataset.playerId !== playerId) el.classList.remove('show');
+  });
+  const badge = document.querySelector(`.player-avg-badge[data-player-id="${playerId}"]`);
+  if (badge) badge.classList.toggle('show');
 }
 
 function handlePhotoUpload(playerId, input) {
@@ -893,6 +909,7 @@ async function saveGame() {
       appData.games.push(created);
     }
 
+    renderRoster();
     renderStats();
     renderPitchingStats();
     renderDefenseStats();
@@ -941,6 +958,7 @@ function deleteGame(gameId) {
     try {
       await apiSend('games', 'DELETE', { id: gameId });
       appData.games = appData.games.filter(g => g.id !== gameId);
+      renderRoster();
       renderStats();
       renderPitchingStats();
       renderDefenseStats();

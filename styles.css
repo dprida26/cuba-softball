@@ -648,6 +648,44 @@ body.admin-mode .player-photo-overlay {
   display: none;
 }
 
+.player-photo-container {
+  cursor: pointer;
+}
+
+.player-avg-badge {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(6, 11, 20, 0.88);
+  color: var(--gold);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  z-index: 3;
+}
+
+.player-avg-badge .avg-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.player-avg-badge.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .player-card::before {
   content: '';
   position: absolute;
