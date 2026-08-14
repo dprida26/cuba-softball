@@ -309,6 +309,28 @@ function formatAvg(val) {
 }
 
 // ---- Pitching Statistics ----
+// Innings pitched use baseball's outs notation: the digit after the point is
+// the number of OUTS (0, 1 or 2), not tenths — 1.2 means 1 inning + 2 outs
+// (5 outs total), and the next out rolls over to 2.0, not 1.3.
+function ipToOuts(ip) {
+  const whole = Math.trunc(ip || 0);
+  let frac = Math.round(((ip || 0) - whole) * 10);
+  if (frac < 0) frac = 0;
+  const extraInnings = Math.floor(frac / 3);
+  frac = frac % 3;
+  return (whole + extraInnings) * 3 + frac;
+}
+
+function outsToIp(outs) {
+  const whole = Math.floor(outs / 3);
+  const frac = outs % 3;
+  return whole + frac / 10;
+}
+
+function eraFromOuts(earnedRuns, outs) {
+  return outs > 0 ? (earnedRuns * 27) / outs : 0;
+}
+
 function getAllPitcherNames() {
   const names = new Set();
   appData.games.forEach(game => {
@@ -318,19 +340,22 @@ function getAllPitcherNames() {
 }
 
 function calculatePitcherStats(pitcherName) {
-  const stats = { GP: 0 };
-  PITCH_STAT_KEYS.forEach(k => stats[k] = 0);
+  const stats = { GP: 0, outs: 0 };
+  PITCH_STAT_KEYS.forEach(k => { if (k !== 'IP') stats[k] = 0; });
 
   appData.games.forEach(game => {
     if (game.pitcherStats && game.pitcherStats[pitcherName]) {
       const gs = game.pitcherStats[pitcherName];
-      const played = PITCH_STAT_KEYS.some(k => (gs[k] || 0) > 0);
+      const gsOuts = ipToOuts(gs.IP || 0);
+      const played = gsOuts > 0 || PITCH_STAT_KEYS.some(k => k !== 'IP' && (gs[k] || 0) > 0);
       if (played) stats.GP++;
-      PITCH_STAT_KEYS.forEach(k => stats[k] += (gs[k] || 0));
+      stats.outs += gsOuts;
+      PITCH_STAT_KEYS.forEach(k => { if (k !== 'IP') stats[k] += (gs[k] || 0); });
     }
   });
 
-  stats.ERA = stats.IP > 0 ? (stats.ER * 9) / stats.IP : 0;
+  stats.IP = outsToIp(stats.outs);
+  stats.ERA = eraFromOuts(stats.ER, stats.outs);
   return stats;
 }
 
@@ -356,8 +381,8 @@ function renderPitchingStats() {
     .map(name => ({ name, computed: calculatePitcherStats(name) }))
     .sort((a, b) => b.computed.IP - a.computed.IP);
 
-  const totals = { GP: 0 };
-  PITCH_STAT_KEYS.forEach(k => totals[k] = 0);
+  const totals = { GP: 0, outs: 0 };
+  PITCH_STAT_KEYS.forEach(k => { if (k !== 'IP') totals[k] = 0; });
 
   pitchers.forEach(p => {
     const s = p.computed;
@@ -377,15 +402,17 @@ function renderPitchingStats() {
     tbody.appendChild(row);
 
     totals.GP = Math.max(totals.GP, s.GP);
-    PITCH_STAT_KEYS.forEach(k => totals[k] += s[k]);
+    totals.outs += s.outs;
+    PITCH_STAT_KEYS.forEach(k => { if (k !== 'IP') totals[k] += s[k]; });
   });
 
-  const teamEra = totals.IP > 0 ? (totals.ER * 9) / totals.IP : 0;
+  const teamIp = outsToIp(totals.outs);
+  const teamEra = eraFromOuts(totals.ER, totals.outs);
   const footRow = document.createElement('tr');
   footRow.innerHTML = `
     <td>EQUIPO</td>
     <td>${appData.games.length}</td>
-    <td>${totals.IP.toFixed(1)}</td>
+    <td>${teamIp.toFixed(1)}</td>
     <td>${totals.H}</td>
     <td>${totals.R}</td>
     <td>${totals.ER}</td>
@@ -651,19 +678,66 @@ function renderPitcherRows() {
     nameInput.oninput = () => { currentPitcherRows[index].name = nameInput.value; };
     rowEl.appendChild(nameInput);
 
-    PITCH_STAT_KEYS.forEach(key => {
+    // IP is a stepper, not free text: baseball innings only ever go
+    // X.0 -> X.1 -> X.2 -> (X+1).0, never X.3-X.9.
+    const ipStepper = document.createElement('div');
+    ipStepper.className = 'ip-stepper';
+
+    const ipMinus = document.createElement('button');
+    ipMinus.type = 'button';
+    ipMinus.className = 'ip-step-btn';
+    ipMinus.textContent = '−';
+    ipMinus.title = 'Quitar un out';
+
+    const ipValue = document.createElement('span');
+    ipValue.className = 'ip-value';
+
+    const ipPlus = document.createElement('button');
+    ipPlus.type = 'button';
+    ipPlus.className = 'ip-step-btn';
+    ipPlus.textContent = '+';
+    ipPlus.title = 'Agregar un out';
+
+    ipStepper.append(ipMinus, ipValue, ipPlus);
+    rowEl.appendChild(ipStepper);
+
+    const eraDisplay = document.createElement('div');
+    eraDisplay.className = 'pitcher-era-display';
+    eraDisplay.title = 'ERA de este partido para este lanzador';
+
+    function updateComputed() {
+      const ip = currentPitcherRows[index].IP || 0;
+      ipValue.textContent = ip.toFixed(1);
+      eraDisplay.textContent = formatEra(eraFromOuts(currentPitcherRows[index].ER || 0, ipToOuts(ip)));
+    }
+
+    ipMinus.onclick = () => {
+      const outs = Math.max(0, ipToOuts(currentPitcherRows[index].IP || 0) - 1);
+      currentPitcherRows[index].IP = outsToIp(outs);
+      updateComputed();
+    };
+    ipPlus.onclick = () => {
+      const outs = ipToOuts(currentPitcherRows[index].IP || 0) + 1;
+      currentPitcherRows[index].IP = outsToIp(outs);
+      updateComputed();
+    };
+
+    PITCH_STAT_KEYS.filter(key => key !== 'IP').forEach(key => {
       const input = document.createElement('input');
       input.type = 'number';
       input.min = '0';
-      if (key === 'IP') input.step = '0.1';
       input.value = row[key] || 0;
       input.placeholder = key;
       input.onfocus = function() { this.select(); };
       input.oninput = () => {
-        currentPitcherRows[index][key] = key === 'IP' ? (parseFloat(input.value) || 0) : (parseInt(input.value) || 0);
+        currentPitcherRows[index][key] = parseInt(input.value) || 0;
+        if (key === 'ER') updateComputed();
       };
       rowEl.appendChild(input);
     });
+
+    rowEl.appendChild(eraDisplay);
+    updateComputed();
 
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
@@ -854,7 +928,7 @@ function renderViewGamePitching(game) {
   names.forEach(name => {
     const gs = game.pitcherStats[name] || {};
     const ip = gs.IP || 0;
-    const era = ip > 0 ? (gs.ER || 0) * 9 / ip : 0;
+    const era = eraFromOuts(gs.ER || 0, ipToOuts(ip));
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${name}</td>

@@ -1167,10 +1167,10 @@ body.admin-mode .admin-section {
 
 .pitcher-row {
   display: grid;
-  grid-template-columns: 160px repeat(7, 56px) 32px;
+  grid-template-columns: 160px 92px repeat(6, 56px) 56px 32px;
   gap: 0.4rem;
   align-items: center;
-  min-width: 640px;
+  min-width: 740px;
 }
 
 .pitcher-row-header {
@@ -1202,6 +1202,59 @@ body.admin-mode .admin-section {
   outline: none;
   border-color: var(--cuba-blue-light);
   background: rgba(0, 37, 144, 0.08);
+}
+
+/* IP stepper: only ever steps through X.0 / X.1 / X.2, matching real innings-pitched notation */
+.ip-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 0.3rem;
+}
+
+.ip-step-btn {
+  background: rgba(0, 37, 144, 0.15);
+  border: none;
+  color: var(--cuba-blue-light);
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.ip-step-btn:hover {
+  background: var(--cuba-blue);
+  color: white;
+}
+
+.ip-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  min-width: 26px;
+  text-align: center;
+}
+
+.pitcher-era-display {
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  color: var(--gold);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  padding: 0.5rem 0.3rem;
+  text-align: center;
 }
 
 .pitcher-remove-btn {
