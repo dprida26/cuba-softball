@@ -376,14 +376,14 @@ body {
 
 /* ---- Section Common ---- */
 .section {
-  padding: 5rem 2rem;
+  padding: 2.5rem 2rem;
   max-width: var(--max-width);
   margin: 0 auto;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
 }
 
 .section-tag {
@@ -496,8 +496,12 @@ body {
 /* ---- Roster Section ---- */
 #roster {
   background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+#roster .section {
+  padding-bottom: 0.5rem;
 }
 
 .roster-grid {
@@ -735,8 +739,8 @@ body.admin-mode .player-photo-overlay {
 
 /* ---- Statistics Section ---- */
 #estadisticas {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
 }
 
 .stats-controls {
@@ -943,8 +947,8 @@ body.admin-mode .player-photo-overlay {
 /* ---- Games / Results Section ---- */
 #resultados {
   background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .record-display {
@@ -1854,7 +1858,7 @@ body.admin-mode .admin-section {
   }
 
   .section {
-    padding: 3rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .roster-grid {
