@@ -106,22 +106,22 @@
         <table class="stats-table" id="statsTable">
           <thead>
             <tr>
-              <th data-sort="name">#</th>
+              <th data-sort="name" data-tip="Número de camiseta">#</th>
               <th data-sort="name">Jugador</th>
-              <th data-sort="GP">JJ</th>
-              <th data-sort="AB">AB</th>
-              <th data-sort="R">C</th>
-              <th data-sort="H">H</th>
-              <th data-sort="2B">2B</th>
-              <th data-sort="3B">3B</th>
-              <th data-sort="HR">HR</th>
-              <th data-sort="RBI">CI</th>
-              <th data-sort="BB">BB</th>
-              <th data-sort="SO">SO</th>
-              <th data-sort="SB">BR</th>
-              <th data-sort="AVG">AVG</th>
-              <th data-sort="OBP">OBP</th>
-              <th data-sort="SLG">SLG</th>
+              <th data-sort="GP" data-tip="Juegos Jugados">JJ</th>
+              <th data-sort="AB" data-tip="Turnos al bate (At Bats)">AB</th>
+              <th data-sort="R" data-tip="Carreras anotadas">C</th>
+              <th data-sort="H" data-tip="Hits conectados">H</th>
+              <th data-sort="2B" data-tip="Dobles">2B</th>
+              <th data-sort="3B" data-tip="Triples">3B</th>
+              <th data-sort="HR" data-tip="Jonrones">HR</th>
+              <th data-sort="RBI" data-tip="Carreras Impulsadas">CI</th>
+              <th data-sort="BB" data-tip="Bases por Bolas recibidas">BB</th>
+              <th data-sort="SO" data-tip="Ponches (Strikeouts)">SO</th>
+              <th data-sort="SB" data-tip="Bases Robadas">BR</th>
+              <th data-sort="AVG" data-tip="Promedio de bateo">AVG</th>
+              <th data-sort="OBP" data-tip="Porcentaje de embasado (On-Base Percentage)">OBP</th>
+              <th data-sort="SLG" data-tip="Slugging: poder de bateo">SLG</th>
             </tr>
           </thead>
           <tbody id="statsBody">
@@ -143,15 +143,15 @@
           <thead>
             <tr>
               <th>Lanzador</th>
-              <th>JJ</th>
-              <th>IP</th>
-              <th>H</th>
-              <th>C</th>
-              <th>CL</th>
-              <th>BB</th>
-              <th>SO</th>
-              <th>HR</th>
-              <th>ERA</th>
+              <th data-tip="Juegos Jugados">JJ</th>
+              <th data-tip="Entradas Lanzadas (Innings Pitched)">IP</th>
+              <th data-tip="Hits permitidos">H</th>
+              <th data-tip="Carreras permitidas">C</th>
+              <th data-tip="Carreras Limpias (Earned Runs)">CL</th>
+              <th data-tip="Bases por Bolas otorgadas">BB</th>
+              <th data-tip="Ponches propinados">SO</th>
+              <th data-tip="Jonrones permitidos">HR</th>
+              <th data-tip="Promedio de Carreras Limpias (Earned Run Average)">ERA</th>
             </tr>
           </thead>
           <tbody id="pitchingBody">
@@ -172,13 +172,13 @@
         <table class="stats-table" id="defenseTable">
           <thead>
             <tr>
-              <th>#</th>
+              <th data-tip="Número de camiseta">#</th>
               <th>Jugador</th>
-              <th>JJ</th>
-              <th>PO</th>
-              <th>A</th>
-              <th>E</th>
-              <th>FPCT</th>
+              <th data-tip="Juegos Jugados">JJ</th>
+              <th data-tip="Outs realizados (Putouts)">PO</th>
+              <th data-tip="Asistencias">A</th>
+              <th data-tip="Errores">E</th>
+              <th data-tip="Porcentaje de Fildeo: (PO+A) / (PO+A+E)">FPCT</th>
             </tr>
           </thead>
           <tbody id="defenseBody">
@@ -306,7 +306,7 @@
         <table class="stats-table" id="viewGameTable">
           <thead>
             <tr>
-              <th>#</th><th>Jugador</th><th>AB</th><th>C</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>CI</th><th>BB</th><th>SO</th><th>BR</th><th>AVG</th>
+              <th data-tip="Número de camiseta">#</th><th>Jugador</th><th data-tip="Turnos al bate (At Bats)">AB</th><th data-tip="Carreras anotadas">C</th><th data-tip="Hits conectados">H</th><th data-tip="Dobles">2B</th><th data-tip="Triples">3B</th><th data-tip="Jonrones">HR</th><th data-tip="Carreras Impulsadas">CI</th><th data-tip="Bases por Bolas recibidas">BB</th><th data-tip="Ponches (Strikeouts)">SO</th><th data-tip="Bases Robadas">BR</th><th data-tip="Promedio de bateo">AVG</th>
             </tr>
           </thead>
           <tbody id="viewGameBody">
@@ -319,7 +319,7 @@
         <table class="stats-table" id="viewGamePitchingTable">
           <thead>
             <tr>
-              <th>Lanzador</th><th>IP</th><th>H</th><th>C</th><th>CL</th><th>BB</th><th>SO</th><th>HR</th><th>ERA</th>
+              <th>Lanzador</th><th data-tip="Entradas Lanzadas (Innings Pitched)">IP</th><th data-tip="Hits permitidos">H</th><th data-tip="Carreras permitidas">C</th><th data-tip="Carreras Limpias (Earned Runs)">CL</th><th data-tip="Bases por Bolas otorgadas">BB</th><th data-tip="Ponches propinados">SO</th><th data-tip="Jonrones permitidos">HR</th><th data-tip="Promedio de Carreras Limpias (ERA)">ERA</th>
             </tr>
           </thead>
           <tbody id="viewGamePitchingBody">
@@ -332,7 +332,7 @@
         <table class="stats-table" id="viewGameDefenseTable">
           <thead>
             <tr>
-              <th>#</th><th>Jugador</th><th>POS</th><th>PO</th><th>A</th><th>E</th><th>FPCT</th>
+              <th data-tip="Número de camiseta">#</th><th>Jugador</th><th data-tip="Posición jugada">POS</th><th data-tip="Outs realizados (Putouts)">PO</th><th data-tip="Asistencias">A</th><th data-tip="Errores">E</th><th data-tip="Porcentaje de Fildeo: (PO+A) / (PO+A+E)">FPCT</th>
             </tr>
           </thead>
           <tbody id="viewGameDefenseBody">

@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateHeroStats();
   setupNavigation();
   setupScrollAnimations();
+  setupHeaderTooltips();
 
   // Set today's date as default for game form
   const dateInput = document.getElementById('gameDate');
@@ -1169,6 +1170,22 @@ function setupScrollAnimations() {
 
   document.querySelectorAll('.player-card, .hero-stat, .game-card').forEach(el => {
     observer.observe(el);
+  });
+}
+
+// ---- Header Tooltips (hover on desktop, tap to toggle on touch) ----
+function setupHeaderTooltips() {
+  document.querySelectorAll('th[data-tip]').forEach(th => {
+    th.addEventListener('click', (e) => {
+      const wasActive = th.classList.contains('tip-active');
+      document.querySelectorAll('th[data-tip].tip-active').forEach(t => t.classList.remove('tip-active'));
+      if (!wasActive) th.classList.add('tip-active');
+      e.stopPropagation();
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('th[data-tip].tip-active').forEach(t => t.classList.remove('tip-active'));
   });
 }
 
