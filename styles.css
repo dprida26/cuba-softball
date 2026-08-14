@@ -1093,6 +1093,23 @@ body.admin-mode .player-photo-overlay {
   background: rgba(0, 37, 144, 0.12);
 }
 
+.game-action-btn-labeled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-subtle);
+}
+
+.game-action-btn-labeled:hover {
+  border-color: var(--cuba-blue);
+}
+
 .game-action-btn.danger:hover {
   color: var(--cuba-red-light);
   background: rgba(207, 20, 43, 0.12);

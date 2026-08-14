@@ -552,8 +552,8 @@ function renderGames() {
       </div>
       <span class="game-result ${resultClass}">${resultText}</span>
       <div class="game-actions">
-        <button class="game-action-btn" onclick="viewGameStats('${game.id}')" title="Ver estadísticas del partido">
-          <i class="fas fa-chart-bar"></i>
+        <button class="game-action-btn game-action-btn-labeled" onclick="viewGameStats('${game.id}')" title="Ver estadísticas del partido">
+          <i class="fas fa-eye"></i> Ver
         </button>
         <button class="game-action-btn admin-only" onclick="editGame('${game.id}')" title="Editar partido">
           <i class="fas fa-edit"></i>
