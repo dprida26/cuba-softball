@@ -269,8 +269,9 @@ function renderStats() {
   });
 
   // Calculate team averages
-  const teamAVG = totals.AB > 0 ? totals.H / totals.AB : 0;
-  const teamOBP = (totals.AB + totals.BB) > 0 ? (totals.H + totals.BB) / (totals.AB + totals.BB) : 0;
+  const teamTotalHits = totals.H + totals['2B'] + totals['3B'] + totals.HR;
+  const teamAVG = totals.AB > 0 ? teamTotalHits / totals.AB : 0;
+  const teamOBP = (totals.AB + totals.BB) > 0 ? (teamTotalHits + totals.BB) / (totals.AB + totals.BB) : 0;
   const teamTB = totals.H + totals['2B'] + 2 * totals['3B'] + 3 * totals.HR;
   const teamSLG = totals.AB > 0 ? teamTB / totals.AB : 0;
 
@@ -314,8 +315,9 @@ function calculatePlayerStats(playerId) {
   });
 
   // Computed stats
-  stats.AVG = stats.AB > 0 ? stats.H / stats.AB : 0;
-  stats.OBP = (stats.AB + stats.BB) > 0 ? (stats.H + stats.BB) / (stats.AB + stats.BB) : 0;
+  const totalHits = stats.H + stats['2B'] + stats['3B'] + stats.HR;
+  stats.AVG = stats.AB > 0 ? totalHits / stats.AB : 0;
+  stats.OBP = (stats.AB + stats.BB) > 0 ? (totalHits + stats.BB) / (stats.AB + stats.BB) : 0;
   const TB = stats.H + stats['2B'] + 2 * stats['3B'] + 3 * stats.HR;
   stats.SLG = stats.AB > 0 ? TB / stats.AB : 0;
 
@@ -599,13 +601,17 @@ function updateHeroStats() {
   document.getElementById('heroWins').textContent = wins;
 
   // Team AVG
-  let totalAB = 0, totalH = 0;
+  let totalAB = 0, totalH = 0, total2B = 0, total3B = 0, totalHR = 0;
   appData.players.forEach(p => {
     const stats = calculatePlayerStats(p.id);
     totalAB += stats.AB;
     totalH += stats.H;
+    total2B += stats['2B'];
+    total3B += stats['3B'];
+    totalHR += stats.HR;
   });
-  const teamAvg = totalAB > 0 ? (totalH / totalAB) : 0;
+  const totalHits = totalH + total2B + total3B + totalHR;
+  const teamAvg = totalAB > 0 ? (totalHits / totalAB) : 0;
   document.getElementById('heroAvg').textContent = formatAvg(teamAvg);
 }
 
