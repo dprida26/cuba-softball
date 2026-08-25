@@ -8,7 +8,7 @@
 // ---- Constants ----
 const API_BASE = '/.netlify/functions';
 const STAT_KEYS = ['AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB'];
-const STAT_LABELS = ['AB', 'C', 'H', '2B', '3B', 'HR', 'CI', 'BB', 'SO', 'BR'];
+const STAT_LABELS = ['VB', 'C', 'H', '2B', '3B', 'HR', 'CI', 'BB', 'K', 'BR'];
 const PITCH_STAT_KEYS = ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'HR'];
 const DEF_STAT_KEYS = ['PO', 'A', 'E'];
 const POSITIONS = ['', 'P', 'C', '1B', '2B', 'SS', '3B', 'RF', 'CF', 'LF', 'MI'];
